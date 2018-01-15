@@ -25,7 +25,7 @@ def loadDatapath(filename = None):
             print 'image_list_len: ', len(image_list)
             image_limit = 0
             for imageFile in image_list:
-                if image_limit > 200:
+                if image_limit > 10:
                     break
                 image_limit += 1
                 if imageFile in config.bad_files:
