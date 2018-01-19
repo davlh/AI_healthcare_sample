@@ -2,6 +2,7 @@ import numpy as np
 from sklearn import svm
 import os
 from sklearn.model_selection import train_test_split
+import pandas as pd
 
 class config:
 
@@ -25,7 +26,7 @@ def loadDatapath(filename = None):
             print 'image_list_len: ', len(image_list)
             image_limit = 0
             for imageFile in image_list:
-                if image_limit > 10:
+                if image_limit > 100:
                     break
                 image_limit += 1
                 if imageFile in config.bad_files:
@@ -76,14 +77,32 @@ def runMachineLearning(trainingSet):
     predictions = clf.predict(X_test)
 
     num_correct = 0
-    for y,p in enumerte(predictions):
+    for p_index,p in enumerate(predictions):
+        y = y_test[p_index]
         if p == y:
             num_correct += 1
 
     percent_correct = num_correct / (len(predictions) * 1.0)
 
+    csv_dict = {}
+    labels = y_test
     print 'predictions: ', predictions, 'labels: ', labels
+    for index, pred in enumerate(predictions):
+        compare_dict = {}
+        compare_dict['prediction'] = pred
+        compare_dict['label'] = labels[index]
+        csv_dict[index] = pd.Series(compare_dict)
+
+    result_df = pd.DataFrame(csv_dict)
+    transpose = result_df.T
+    transpose.to_csv('Predictions.csv', encoding = 'utf-8')
+
+
     print 'percent correct: ', percent_correct
+    with open("percent_correct.txt", "w") as text_file:
+        text_file.write("Percent Correct: {}".format(percent_correct))
+
+
 
 
 
